@@ -10,8 +10,8 @@ plugins for the desired log source.
 You want to post process / analyze a set of log files, but they're not standardised / from various sources and you don't want to write the code to normalize the log files on the
 fly.  
   
-Step 1: You use the Tailviewer.Normalizer CLI to pre-process the data into a single file (for example a json file) with a defined schema.  
-Step 2: You analyze / process the data with the tools of your choice, only having to parse the output from Step 1, which has a defined schema.
+Step 1: You use the Tailviewer.Normalizer CLI to pre-process the data into a single file (for example a json file)  
+Step 2: You analyze / process the data with the tools of your choice, only having to parse the output from Step 1  
 
 ## Commandline Documentation
 
@@ -35,10 +35,29 @@ Step 2: You analyze / process the data with the tools of your choice, only havin
   source (pos. 0)       Required. The path of a log file, an archive or a folder of log files
 ```
 
+# Output Formats
+
+For now, only JSON is supported.
+
+## Json
+
+The entire / all log source file(s) is normalized into a singular json file. Each line marks a new log entry. The following attributes are currently written:
+
+- Line: The line number of the first line of the log entry, e.g. `42`
+- FileName: The name of the log file the log entry was extracted from, e.g. `foo.log`
+- FullFilePath: The entire path of the log file the log entry was extracted from, e.g. `C:\bar.zip\foo.log`
+- Level: The log level of the entry, e.g. `fatal, error, warning, info, debug, trace` or `other` if the level couldn't be detected
+- Timestamp: The timestamp of the log entry in sortable format or null (See: https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#Sortable), e.g. `2021-05-11T15:28:21`
+- RawMessage: The actual content of the log entry. May consist of multiple lines in case Tailviewer (or a plugin) detected that multiple lines form a singular log entry, e.g. `foo\r\nbar`
+
 # Examples
 
 ## Normalize an entire folder tree
 
+The following commandline call shows how to use the normalizer to parse an entire subtree of log files (ending in .log) into a single json file.
+The resulting log file is automatically sorted by timestamp.
+
 ```
 Tailviewer.Normalizer.exe C:\logs --recursive --file_filter *.log -o C:\condensed.json
 ```
+

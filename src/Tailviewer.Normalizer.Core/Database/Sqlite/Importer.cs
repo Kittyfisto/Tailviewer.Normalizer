@@ -18,7 +18,7 @@ namespace Tailviewer.Normalizer.Core.Database.Sqlite
 		private readonly SQLiteParameter _logSourceFullFilePath;
 
 		private readonly SQLiteCommand _insertLogEntryCommand;
-		private readonly SQLiteParameter _logLine;
+		private readonly SQLiteParameter _lineNumber;
 		private readonly SQLiteParameter _logEntrySource;
 		private readonly SQLiteParameter _logEntryTimestamp;
 		private readonly SQLiteParameter _logEntryLevel;
@@ -35,8 +35,8 @@ namespace Tailviewer.Normalizer.Core.Database.Sqlite
 			_insertLogSourceCommand.Parameters.Add(_logSourceFullFilePath = new SQLiteParameter(DbType.String));
 			_nextLogSourceId = 0;
 
-			_insertLogEntryCommand = new SQLiteCommand($"insert into {LogEntriesTable.Name} ({LogEntriesTable.LogLineColumn}, {LogEntriesTable.LogSourceColumn}, {LogEntriesTable.TimestampColumn}, {LogEntriesTable.LogLevelColumn}, {LogEntriesTable.RawContentColumn}) values (?, ?, ?, ?, ?)", connection);
-			_insertLogEntryCommand.Parameters.Add(_logLine = new SQLiteParameter(DbType.Int64));
+			_insertLogEntryCommand = new SQLiteCommand($"insert into {LogEntriesTable.Name} ({LogEntriesTable.LineNumberColumn}, {LogEntriesTable.LogSourceColumn}, {LogEntriesTable.TimestampColumn}, {LogEntriesTable.LogLevelColumn}, {LogEntriesTable.RawContentColumn}) values (?, ?, ?, ?, ?)", connection);
+			_insertLogEntryCommand.Parameters.Add(_lineNumber = new SQLiteParameter(DbType.Int64));
 			_insertLogEntryCommand.Parameters.Add(_logEntrySource = new SQLiteParameter(DbType.Int64));
 			_insertLogEntryCommand.Parameters.Add(_logEntryTimestamp = new SQLiteParameter(DbType.String));
 			_insertLogEntryCommand.Parameters.Add(_logEntryLevel = new SQLiteParameter(DbType.String));
@@ -51,7 +51,7 @@ namespace Tailviewer.Normalizer.Core.Database.Sqlite
 			foreach (var logEntry in logEntries)
 			{
 				var timestamp = logEntry.Timestamp;
-				_logLine.Value = logEntry.LineNumber;
+				_lineNumber.Value = logEntry.LineNumber;
 				_logEntryTimestamp.Value = LogEntriesTable.FormatTimestamp(timestamp);
 				_logEntryLevel.Value = LogEntriesTable.FormatLevel(logEntry.LogLevel);
 				_logEntryRawContent.Value = logEntry.RawContent;

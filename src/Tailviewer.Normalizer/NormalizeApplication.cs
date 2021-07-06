@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using log4net;
+using Tailviewer.Api;
+using Tailviewer.Core;
 using Tailviewer.Normalizer.Core.Database;
 using Tailviewer.Normalizer.Core.Database.Sqlite;
 using Tailviewer.Normalizer.Core.Exporter;
@@ -76,8 +79,71 @@ namespace Tailviewer.Normalizer
 			Log.InfoFormat("Parsing {0} ({1} bytes)...", file.FullPath, file.Length);
 			var logEntries = parser.Parse(file.FullPath);
 
-			Log.InfoFormat("Parsed {0} log entries, importing into database...", logEntries.Count);
-			importer.Import(file, logEntries);
+			var mergedLogEntries = GroupByLogEntry(logEntries);
+
+			Log.InfoFormat("Parsed {0} lines into {1} log entries, importing into database...", logEntries.Count, mergedLogEntries.Count);
+			importer.Import(file, mergedLogEntries);
+		}
+
+		private IReadOnlyList<IReadOnlyLogEntry> GroupByLogEntry(IReadOnlyList<IReadOnlyLogEntry> logEntries)
+		{
+			var group = new List<IReadOnlyLogEntry>();
+			var ret = new List<IReadOnlyLogEntry>();
+			for (int i = 0; i < logEntries.Count; ++i)
+			{
+				var current = logEntries[i];
+				if (group.Count > 0)
+				{
+					if (!BelongsToGroup(current, group))
+					{
+						ret.Add(CreateLogEntry(group));
+						group.Clear();
+					}
+				}
+				group.Add(current);
+			}
+
+			if (group.Count > 0)
+				ret.Add(CreateLogEntry(group));
+
+			return ret;
+		}
+
+		private bool BelongsToGroup(IReadOnlyLogEntry current, List<IReadOnlyLogEntry> @group)
+		{
+			var first = group[0];
+			if (first.LogEntryIndex == current.LogEntryIndex)
+				return true;
+
+			if (first.Timestamp != null && current.Timestamp == null)
+				return true;
+
+			if (first.LogLevel != LevelFlags.None && current.LogLevel == LevelFlags.None)
+				return true;
+
+			return false;
+		}
+
+		private IReadOnlyLogEntry CreateLogEntry(IReadOnlyList<IReadOnlyLogEntry> @group)
+		{
+			var first = group[0];
+			var values = new Dictionary<IColumnDescriptor, object>();
+			foreach (var column in first.Columns)
+			{
+				values.Add(column, first.GetValue(column));
+			}
+
+			var rawContent = new StringBuilder();
+			foreach (var logEntry in group)
+			{
+				if (rawContent.Length > 0)
+					rawContent.AppendLine();
+				rawContent.Append(logEntry.RawContent);
+			}
+
+			values[Columns.RawContent] = rawContent.ToString();
+			var mergedLogEntry = new ReadOnlyLogEntry(values);
+			return mergedLogEntry;
 		}
 
 		private IReadOnlyList<string> FindFiles(CompoundFilesystem filesystem)

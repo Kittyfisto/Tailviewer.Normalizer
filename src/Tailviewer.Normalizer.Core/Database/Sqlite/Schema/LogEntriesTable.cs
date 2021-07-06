@@ -11,7 +11,7 @@ namespace Tailviewer.Normalizer.Core.Database.Sqlite.Schema
 	{
 		public static readonly string Name = "LogEntries";
 		public static readonly string IdColumn = "Id";
-		public static readonly string LogLineColumn = "Line";
+		public static readonly string LineNumberColumn = "LineNumber";
 		public static readonly string LogSourceColumn = "Source";
 		public static readonly string LogLevelColumn = "Level";
 		public static readonly string TimestampColumn = "Timestamp";
@@ -21,7 +21,7 @@ namespace Tailviewer.Normalizer.Core.Database.Sqlite.Schema
 		{
 			var sql = $"CREATE TABLE {Name}(" +
 			          $"{IdColumn} INTEGER PRIMARY KEY, " +
-			          $"{LogLineColumn} INTEGER, " +
+			          $"{LineNumberColumn} INTEGER, " +
 			          $"{LogSourceColumn} INTEGER, " +
 					  $"{LogLevelColumn} TEXT, " +
 			          $"{TimestampColumn} TEXT, " +

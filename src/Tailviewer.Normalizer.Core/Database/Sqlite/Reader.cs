@@ -21,7 +21,7 @@ namespace Tailviewer.Normalizer.Core.Database.Sqlite
 		public IEnumerable<IReadOnlyLogEntry> Query(ILogEntryFilter filter)
 		{
 			var sources = ReadSources();
-			var logEntriesCommand = new SQLiteCommand($"select {LogEntriesTable.LogLineColumn}, {LogEntriesTable.LogSourceColumn}, {LogEntriesTable.TimestampColumn}, {LogEntriesTable.LogLevelColumn}, {LogEntriesTable.RawContentColumn} from {LogEntriesTable.Name} order by {LogEntriesTable.TimestampColumn} asc", _connection);
+			var logEntriesCommand = new SQLiteCommand($"select {LogEntriesTable.LineNumberColumn}, {LogEntriesTable.LogSourceColumn}, {LogEntriesTable.TimestampColumn}, {LogEntriesTable.LogLevelColumn}, {LogEntriesTable.RawContentColumn} from {LogEntriesTable.Name} order by {LogEntriesTable.TimestampColumn} asc", _connection);
 			using (var reader = logEntriesCommand.ExecuteReader())
 			{
 				while (reader.Read())
@@ -61,7 +61,7 @@ namespace Tailviewer.Normalizer.Core.Database.Sqlite
 		private IReadOnlyLogEntry CreateLogEntry(SQLiteDataReader reader,
 		                                         IReadOnlyDictionary<long, LogSource> sources)
 		{
-			var logIndex = reader.GetInt32(0);
+			var lineNumber = reader.GetInt32(0);
 			var logSourceId = reader.GetInt64(1);
 			var timestamp = GetString(reader, 2);
 			var level = GetString(reader, 3);
@@ -70,8 +70,8 @@ namespace Tailviewer.Normalizer.Core.Database.Sqlite
 
 			return new ReadOnlyLogEntry(new Dictionary<IColumnDescriptor, object>
 			{
-				{Columns.Index, logIndex },
-				{Columns.LineNumber, logIndex + 1 },
+				{Columns.Index, lineNumber - 1 },
+				{Columns.LineNumber, lineNumber },
 				{Columns.Timestamp, LogEntriesTable.TryParseTimestamp(timestamp) },
 				{Columns.LogLevel, LogEntriesTable.TryParseLevel(level) },
 				{Columns.RawContent, rawContent },

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Tailviewer.Api;
@@ -32,7 +33,8 @@ namespace Tailviewer.Normalizer.Core.Exporter
 			ret.Add("Line", logEntry.LineNumber);
 			ret.Add("FileName", logEntry.GetValue(CustomColumns.SourceFileName));
 			ret.Add("FullFilePath", logEntry.GetValue(CustomColumns.FullSourceFilePath));
-			ret.Add("Timestamp", logEntry.Timestamp);
+			ret.Add("Timestamp", ToString(logEntry.Timestamp));
+			ret.Add("Level", logEntry.LogLevel.ToString().ToLower());
 			ret.Add("RawMessage", logEntry.RawContent);
 			return ret;
 		}
@@ -46,5 +48,13 @@ namespace Tailviewer.Normalizer.Core.Exporter
 		}
 
 		#endregion
+
+		private static string ToString(DateTime? timestamp)
+		{
+			if (timestamp == null)
+				return null;
+
+			return timestamp.Value.ToString("s");
+		}
 	}
 }
