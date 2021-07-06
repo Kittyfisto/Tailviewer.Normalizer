@@ -12,8 +12,10 @@ namespace Tailviewer.Normalizer.Core.Exporter
 	{
 		#region Implementation of IExporter
 
-		public void ExportTo(ILogEntryDatabase database, string filePath)
+		public int ExportTo(ILogEntryDatabase database, string filePath)
 		{
+			int logEntryCount = 0;
+
 			using (StreamWriter writer = File.CreateText(filePath))
 			using (var reader = database.CreateReader())
 			{
@@ -23,8 +25,12 @@ namespace Tailviewer.Normalizer.Core.Exporter
 				{
 					serializer.Serialize(writer, CreateJson(logEntry));
 					writer.WriteLine();
+
+					++logEntryCount;
 				}
 			}
+
+			return logEntryCount;
 		}
 
 		private object CreateJson(IReadOnlyLogEntry logEntry)

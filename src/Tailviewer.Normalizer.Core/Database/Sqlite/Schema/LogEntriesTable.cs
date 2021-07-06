@@ -43,6 +43,7 @@ namespace Tailviewer.Normalizer.Core.Database.Sqlite.Schema
 		[Pure]
 		public static string FormatTimestamp(DateTime? timestamp)
 		{
+			// The format used here MUST be sortable or otherwise we'll run into trouble when selecting the data back from the database...
 			return timestamp?.ToString("s", CultureInfo.InvariantCulture);
 		}
 

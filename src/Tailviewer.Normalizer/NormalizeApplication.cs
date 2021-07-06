@@ -70,18 +70,20 @@ namespace Tailviewer.Normalizer
 
 				Log.InfoFormat("All files imported, exporting to '{0}'...", _options.Output);
 
-				exporter.ExportTo(_database, _options.Output);
+				var numExported = exporter.ExportTo(_database, _options.Output);
+
+				Log.InfoFormat("Exported {0} log entries to '{1}'!", numExported, _options.Output);
 			}
 		}
 
 		private void ImportSource(IImporter importer, LogFileParser parser, IFileInfo file)
 		{
-			Log.InfoFormat("Parsing {0} ({1} bytes)...", file.FullPath, file.Length);
+			Log.InfoFormat("{0}: Parsing ({1} bytes)...", file.FullPath, file.Length);
 			var logEntries = parser.Parse(file.FullPath);
 
 			var mergedLogEntries = GroupByLogEntry(logEntries);
 
-			Log.InfoFormat("Parsed {0} lines into {1} log entries, importing into database...", logEntries.Count, mergedLogEntries.Count);
+			Log.InfoFormat("{0}: Parsed {1} lines into {2} log entries, importing into database...", file.FullPath, logEntries.Count, mergedLogEntries.Count);
 			importer.Import(file, mergedLogEntries);
 		}
 

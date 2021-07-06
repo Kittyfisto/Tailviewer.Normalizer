@@ -46,18 +46,10 @@
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Extensions, Version=2.0.72.0, Culture=neutral, PublicKeyToken=951c63ca832f7094, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Threading.Extensions.2.0.72\lib\net45\System.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
     <Reference Include="Tailviewer.Api, Version=1.0.0.33, Culture=neutral, PublicKeyToken=951c63ca832f7094, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Tailviewer.Api.1.0.0.33-beta\lib\net45\Tailviewer.Api.dll</HintPath>
     </Reference>

@@ -6,6 +6,6 @@ namespace Tailviewer.Normalizer.Core.Exporter
 	public interface IExporter
 		: IDisposable
 	{
-		void ExportTo(ILogEntryDatabase database, string filePath);
+		int ExportTo(ILogEntryDatabase database, string filePath);
 	}
 }
