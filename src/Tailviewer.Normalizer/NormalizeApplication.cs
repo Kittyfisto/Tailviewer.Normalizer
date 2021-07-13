@@ -12,6 +12,7 @@ using Tailviewer.Core;
 using Tailviewer.Normalizer.Core.Database;
 using Tailviewer.Normalizer.Core.Database.Sqlite;
 using Tailviewer.Normalizer.Core.Exporter;
+using Tailviewer.Normalizer.Core.Exporter.Json;
 using Tailviewer.Normalizer.Core.Parsing;
 using Tailviewer.Normalizer.Core.Sources;
 
@@ -25,7 +26,6 @@ namespace Tailviewer.Normalizer
 		private readonly NormalizeOptions _options;
 		private readonly Regex _fileNameRegex;
 		private readonly SqliteLogEntryDatabase _database;
-		private IImporter _importer;
 
 		public NormalizeApplication(NormalizeOptions options)
 		{
@@ -36,7 +36,6 @@ namespace Tailviewer.Normalizer
 			_fileNameRegex = new Regex(regex);
 
 			_database = SqliteLogEntryDatabase.CreateInMemory();
-			_importer = _database.CreateImporter();
 		}
 
 		public int Run()
@@ -70,10 +69,20 @@ namespace Tailviewer.Normalizer
 
 				Log.InfoFormat("All files imported, exporting to '{0}'...", _options.Output);
 
-				var numExported = exporter.ExportTo(_database, _options.Output);
+				var numExported = exporter.ExportTo(CreateOptions(_options), _database, _options.Output);
 
 				Log.InfoFormat("Exported {0} log entries to '{1}'!", numExported, _options.Output);
 			}
+		}
+
+		private NormalizationOptions CreateOptions(NormalizeOptions options)
+		{
+			return new NormalizationOptions
+			{
+				Source = options.Source,
+				FileFilter = options.FileFilter,
+				Recursive = options.Recursive
+			};
 		}
 
 		private void ImportSource(IImporter importer, LogFileParser parser, IFileInfo file)
@@ -192,6 +201,7 @@ namespace Tailviewer.Normalizer
 
 		public void Dispose()
 		{
+			_database.Dispose();
 		}
 
 		#endregion

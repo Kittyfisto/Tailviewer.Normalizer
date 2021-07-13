@@ -41,7 +41,44 @@ For now, only JSON is supported.
 
 ## Json
 
-The entire / all log source file(s) is normalized into a singular json file. Each line marks a new log entry. The following attributes are currently written:
+The entire / all log source file(s) is normalized into a singular json file. The resulting document consists of:
+
+- A structured view onto the arguments given to the normalizer (input, recursive true/false, filters, etc..)
+- A list of all log files which were discovered during normalization (TODO)
+- A list of noteworthy warnings and/or errors which occured during normalization (TODO)
+- A list of log events
+
+See the following example json file:
+
+```
+{
+    "Options": {
+        "Source": "F:\\Logs\\logs.zip",
+        "Recursive": true,
+        "FileFilter": "foo*.log"
+    },
+    "Events": [
+        {
+            "Line": 1,
+            "FileName": "foo_20210511_152116_0.log",
+            "FullFilePath": "F:\\Logs\\logs.zip\\foo_20210511_152116_0.log",
+            "Timestamp": "2021-05-11T15:21:16",
+            "Level": "other",
+            "RawMessage": "2021-05-11 15:21:16 Hello"
+        },
+        {
+            "Line": 2,
+            "FileName": "foo_20210511_152116_0.log",
+            "FullFilePath": "F:\\Logs\\logs.zip\\foo_20210511_152116_0.log",
+            "Timestamp": "2021-05-11T15:21:16",
+            "Level": "other",
+            "RawMessage": "2021-05-11 15:21:16 World"
+        },
+    ]
+}
+```
+
+Description of the Event attributes in detail:
 
 - Line: The line number of the first line of the log entry, e.g. `42`
 - FileName: The name of the log file the log entry was extracted from, e.g. `foo.log`

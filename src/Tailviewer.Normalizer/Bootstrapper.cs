@@ -45,7 +45,7 @@ namespace Tailviewer.Normalizer
 
 			var patternLayout = new PatternLayout
 			{
-				ConversionPattern = "%date{HH:mm:ss,fff} %-5level %message%newline"
+				ConversionPattern = "%-5level %message%newline"
 			};
 			patternLayout.ActivateOptions();
 			var consoleAppender = new ConsoleAppender

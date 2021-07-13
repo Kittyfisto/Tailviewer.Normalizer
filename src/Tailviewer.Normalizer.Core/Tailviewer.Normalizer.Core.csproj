@@ -88,7 +88,10 @@
     <Compile Include="Database\IReader.cs" />
     <Compile Include="Database\Sqlite\Reader.cs" />
     <Compile Include="Exporter\IExporter.cs" />
-    <Compile Include="Exporter\JsonExporter.cs" />
+    <Compile Include="Exporter\Json\JsonExporter.cs" />
+    <Compile Include="Exporter\LogEvent.cs" />
+    <Compile Include="Exporter\NormalizationOptions.cs" />
+    <Compile Include="Exporter\NormalizedLog.cs" />
     <Compile Include="Parsing\LogFileParser.cs" />
     <Compile Include="Parsing\LogFileFormatMatcher.cs" />
     <Compile Include="Parsing\NoThrowLogEntryParser.cs" />
