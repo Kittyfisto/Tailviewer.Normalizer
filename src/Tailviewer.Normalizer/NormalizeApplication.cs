@@ -54,32 +54,49 @@ namespace Tailviewer.Normalizer
 			using (var exporter = new JsonExporter())
 			{
 				var allFiles = FindFiles(filesystem);
-				Log.InfoFormat("Found {0} files in total, applying filename filter '{1}'...", allFiles.Count, _options.FileFilter);
+				int numExported;
 
-				var filteredFiles = FilterFiles(filesystem, allFiles);
-				if (filteredFiles.Any())
+				if (allFiles.Any())
 				{
-					Log.InfoFormat("{0} out of {1} files match filter, importing file(s) into database...",
-					               filteredFiles.Count,
-					               allFiles.Count);
-					foreach (var file in filteredFiles)
+					Log.InfoFormat("Found {0} files in total, applying filename filter '{1}'...", allFiles.Count, _options.FileFilter);
+
+					var filteredFiles = FilterFiles(filesystem, allFiles);
+					if (filteredFiles.Any())
 					{
-						ImportSource(importer, parser, file);
+						Log.InfoFormat("{0} out of {1} files match filter, importing file(s) into database...",
+						               filteredFiles.Count,
+						               allFiles.Count);
+						foreach (var file in filteredFiles)
+						{
+							ImportSource(importer, parser, file);
+						}
+
+						importer.Commit();
+
+						Log.InfoFormat("All files imported, exporting to '{0}'...", _options.Output);
+
+						numExported = exporter.ExportTo(CreateOptions(_options), CreateReport(allFiles, filteredFiles), _database, _options.Output);
+
+					}
+					else
+					{
+						Log.WarnFormat("The file_filter \"{0}\" excludes all {1} file(s) from the source!", _options.FileFilter, allFiles.Count);
+
+						importer.Commit();
+						numExported = exporter.ExportTo(CreateOptions(_options), CreateReport(allFiles, filteredFiles), _database, _options.Output);
 					}
 				}
 				else
 				{
-					Log.WarnFormat("The file_filter \"{0}\" excludes all {1} file(s) from the source!", _options.FileFilter, allFiles.Count);
+					Log.WarnFormat("The source \"{0}\" does not contain a single file!", _options.Source);
+
+					importer.Commit();
+					numExported = exporter.ExportTo(CreateOptions(_options), CreateReport(new string[0], new IFileInfo[0]), _database, _options.Output);
 				}
-
-				importer.Commit();
-
-				Log.InfoFormat("All files imported, exporting to '{0}'...", _options.Output);
-
-				var numExported = exporter.ExportTo(CreateOptions(_options), CreateReport(allFiles, filteredFiles), _database, _options.Output);
 
 				Log.InfoFormat("Exported {0} log entries to '{1}'!", numExported, _options.Output);
 			}
+			
 		}
 
 		private IReadOnlyList<LogFileReport> CreateReport(IReadOnlyList<string> allFiles,

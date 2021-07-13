@@ -57,7 +57,7 @@ See the following example json file:
         "Recursive": true,
         "FileFilter": "foo*.log"
     },
-    "LogFileReports": [
+    "Files": [
         {
             "FullFilePath": "F:\\Logs\\logs.zip\\foo_20210511_152116_0.log",
             "Included": true

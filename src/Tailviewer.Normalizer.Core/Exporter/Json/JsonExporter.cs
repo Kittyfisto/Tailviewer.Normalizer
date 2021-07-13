@@ -31,7 +31,7 @@ namespace Tailviewer.Normalizer.Core.Exporter.Json
 				var jsonObject = new NormalizedLog
 				{
 					Options = options,
-					LogFileReports = new List<LogFileReport>(logFileReports),
+					Files = new List<LogFileReport>(logFileReports),
 					Events = new List<LogEvent>()
 				};
 				foreach (var logEntry in reader.Query(null))
