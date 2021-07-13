@@ -74,24 +74,30 @@ namespace Tailviewer.Normalizer
 						importer.Commit();
 
 						Log.InfoFormat("All files imported, exporting to '{0}'...", _options.Output);
-
-						numExported = exporter.ExportTo(CreateOptions(_options), CreateReport(allFiles, filteredFiles), _database, _options.Output);
-
 					}
 					else
 					{
-						Log.WarnFormat("The file_filter \"{0}\" excludes all {1} file(s) from the source!", _options.FileFilter, allFiles.Count);
-
 						importer.Commit();
-						numExported = exporter.ExportTo(CreateOptions(_options), CreateReport(allFiles, filteredFiles), _database, _options.Output);
+
+						Log.WarnFormat("The file_filter \"{0}\" excludes all {1} file(s) from the source!", _options.FileFilter, allFiles.Count);
 					}
+
+					numExported = exporter.ExportTo(CreateOptions(_options),
+					                                CreateReport(allFiles, filteredFiles),
+					                                parser.CreateReport(),
+					                                _database,
+					                                _options.Output);
 				}
 				else
 				{
 					Log.WarnFormat("The source \"{0}\" does not contain a single file!", _options.Source);
 
 					importer.Commit();
-					numExported = exporter.ExportTo(CreateOptions(_options), CreateReport(new string[0], new IFileInfo[0]), _database, _options.Output);
+					numExported = exporter.ExportTo(CreateOptions(_options),
+					                                CreateReport(new string[0], new IFileInfo[0]),
+													parser.CreateReport(),
+					                                _database,
+					                                _options.Output);
 				}
 
 				Log.InfoFormat("Exported {0} log entries to '{1}'!", numExported, _options.Output);

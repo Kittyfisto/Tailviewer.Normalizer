@@ -48,6 +48,23 @@ namespace Tailviewer.Normalizer.Systemtests
 		}
 
 		[Test]
+		public void Excluding_all_files_with_a_file_filter_prints_a_warning()
+		{
+			var source = Path.Combine(_testData, "source_one_file_in_archive.zip");
+			var json = "all_filtered.json";
+			var result = Normalize(source, json, recursive: true, filter: "*.log");
+			result.ReturnCode.Should().Be(0);
+			result.Output.Should().Contain("WARN  The file_filter \"*.log\" excludes all 1 file(s) from the source!");
+
+			var actualContent = ReadOutput(json);
+			actualContent.Options.FileFilter.Should().Be("*.log");
+			actualContent.Files.Should().HaveCount(1);
+			actualContent.Files[0].FullFilePath.Should().Be(Path.Combine(source, "1Mb.txt"));
+			actualContent.Files[0].Included.Should().BeFalse("because the log file 1Mb.txt does not match the filter *.log");
+			actualContent.Events.Should().BeEmpty("because we've specified a filter that excludes all log files in the source archive");
+		}
+
+		[Test]
 		public void A_zip_file_with_one_log_can_be_normalized_into_a_json_document()
 		{
 			var source = Path.Combine(_testData, "source_one_file_in_archive.zip");
@@ -65,23 +82,6 @@ namespace Tailviewer.Normalizer.Systemtests
 			actualContent.Events.Should().HaveCount(9996);
 			actualContent.Events[0].RawMessage.Should().Be("2015-10-07 19:50:58,982 [8092, 1] INFO  SharpRemote.Hosting.OutOfProcessSiloServer (null) - Silo Server starting, args (1): \"14056\", without custom type resolver");
 			actualContent.Events[9995].RawMessage.Should().Be("2015-10-07 19:51:01,813 [8092, 5] DEBUG SharpRemote.AbstractSocketRemotingEndPoint (null) - Invocation of RPC #3319 finished");
-		}
-
-		[Test]
-		public void Excluding_all_files_with_a_file_filter_prints_a_warning()
-		{
-			var source = Path.Combine(_testData, "source_one_file_in_archive.zip");
-			var json = "all_filtered.json";
-			var result = Normalize(source, json, recursive: true, filter: "*.log");
-			result.ReturnCode.Should().Be(0);
-			result.Output.Should().Contain("WARN  The file_filter \"*.log\" excludes all 1 file(s) from the source!");
-
-			var actualContent = ReadOutput(json);
-			actualContent.Options.FileFilter.Should().Be("*.log");
-			actualContent.Files.Should().HaveCount(1);
-			actualContent.Files[0].FullFilePath.Should().Be(Path.Combine(source, "1Mb.txt"));
-			actualContent.Files[0].Included.Should().BeFalse("because the log file 1Mb.txt does not match the filter *.log");
-			actualContent.Events.Should().BeEmpty("because we've specified a filter that excludes all log files in the source archive");
 		}
 
 		private ExecutionResult Normalize(string source, string output, bool recursive = false, string filter = null)

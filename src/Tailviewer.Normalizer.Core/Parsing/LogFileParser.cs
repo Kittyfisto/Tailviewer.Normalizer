@@ -7,6 +7,7 @@ using System.Threading;
 using Tailviewer.Api;
 using Tailviewer.Archiver.Plugins;
 using Tailviewer.Core;
+using Tailviewer.Normalizer.Core.Exporter;
 
 namespace Tailviewer.Normalizer.Core.Parsing
 {
@@ -45,6 +46,21 @@ namespace Tailviewer.Normalizer.Core.Parsing
 
 			_services.RegisterInstance<IRawFileLogSourceFactory>(_rawLogSourceFactory);
 			_services.RegisterInstance<ILogFileFormatMatcher>(new LogFileFormatMatcher(_services));
+		}
+
+		public IReadOnlyList<PluginReport> CreateReport()
+		{
+			var reports = new List<PluginReport>();
+			foreach (var pluginDescription in _pluginCache.Plugins)
+			{
+				reports.Add(new PluginReport
+				{
+					FullFilePath = pluginDescription.FilePath,
+					Loaded = string.IsNullOrEmpty(pluginDescription.Error),
+					Error = pluginDescription.Error
+				});
+			}
+			return reports;
 		}
 
 		public IReadOnlyList<IReadOnlyLogEntry> Parse(string fileName)

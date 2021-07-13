@@ -93,6 +93,7 @@
     <Compile Include="Exporter\LogFileReport.cs" />
     <Compile Include="Exporter\NormalizationOptions.cs" />
     <Compile Include="Exporter\NormalizedLog.cs" />
+    <Compile Include="Exporter\PluginReport.cs" />
     <Compile Include="Parsing\LogFileParser.cs" />
     <Compile Include="Parsing\LogFileFormatMatcher.cs" />
     <Compile Include="Parsing\NoThrowLogEntryParser.cs" />

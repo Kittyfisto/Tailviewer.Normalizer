@@ -44,6 +44,7 @@ For now, only JSON is supported.
 The entire / all log source file(s) is normalized into a singular json file. The resulting document consists of:
 
 - A structured view onto the arguments given to the normalizer (input, recursive true/false, filters, etc..)
+- A list of all tailviewer plugins which were discovered in order to deal with custom log files (including )
 - A list of all files which were discovered during normalization (and if they were included or not, for example because their filename did not match the file_filter)
 - A list of noteworthy warnings and/or errors which occured during normalization (TODO)
 - A list of log events
@@ -57,6 +58,18 @@ See the following example json file:
         "Recursive": true,
         "FileFilter": "foo*.log"
     },
+    "Plugins": [
+        {
+            "FullFilePath": "C:\\Users\\Simon\\AppData\\Local\\Tailviewer\\Downloads\\Plugins\\Tailviewer.MSBuild.0.0.0.tvp",
+            "Loaded": true,
+            "Error": null
+        },
+        {
+            "FullFilePath": "C:\\Users\\Simon\\AppData\\Local\\Tailviewer\\Downloads\\Plugins\\Tailviewer.Analysis.Count.0.7.tvp",
+            "Loaded": false,
+            "Error": "The plugin could not be loaded"
+        }
+    ],
     "Files": [
         {
             "FullFilePath": "F:\\Logs\\logs.zip\\foo_20210511_152116_0.log",

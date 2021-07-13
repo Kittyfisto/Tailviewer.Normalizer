@@ -9,6 +9,7 @@ namespace Tailviewer.Normalizer.Core.Exporter
 	{
 		int ExportTo(NormalizationOptions options, 
 		             IReadOnlyList<LogFileReport> logFileReports,
+		             IReadOnlyList<PluginReport> plugins,
 		             ILogEntryDatabase database,
 		             string filePath);
 	}
