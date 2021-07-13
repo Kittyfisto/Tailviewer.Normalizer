@@ -38,18 +38,37 @@ namespace Tailviewer.Normalizer.Systemtests
 			var json = "single_zip_result.json";
 			var result = Normalize(source, json, recursive: true);
 			result.ReturnCode.Should().Be(0);
-			result.Output.Should().NotContain("ERROR:");
 
 			var actualContent = ReadOutput(json);
 			actualContent.Options.Source.Should().Be(source);
 			actualContent.Options.Recursive.Should().BeTrue();
 			actualContent.Options.FileFilter.Should().Be("*.txt;*.log", "because by default, the normalizer will only inspect files ending in .txt or .log");
+			actualContent.LogFileReports.Should().HaveCount(1);
+			actualContent.LogFileReports[0].FullFilePath.Should().Be(Path.Combine(source, "1Mb.txt"));
+			actualContent.LogFileReports[0].Included.Should().BeTrue();
 			actualContent.Events.Should().HaveCount(9996);
 			actualContent.Events[0].RawMessage.Should().Be("2015-10-07 19:50:58,982 [8092, 1] INFO  SharpRemote.Hosting.OutOfProcessSiloServer (null) - Silo Server starting, args (1): \"14056\", without custom type resolver");
 			actualContent.Events[9995].RawMessage.Should().Be("2015-10-07 19:51:01,813 [8092, 5] DEBUG SharpRemote.AbstractSocketRemotingEndPoint (null) - Invocation of RPC #3319 finished");
 		}
 
-		private ExecutionResult Normalize(string source, string output, bool recursive)
+		[Test]
+		public void Log_files_not_matching_the_filter_are_excluded()
+		{
+			var source = Path.Combine(_testData, "source_one_file_in_archive.zip");
+			var json = "single_zip_result.json";
+			var result = Normalize(source, json, recursive: true, filter: "*.log");
+			result.ReturnCode.Should().Be(0);
+			result.Output.Should().Contain("WARN  The file_filter \"*.log\" excludes all 1 file(s) from the source!");
+
+			var actualContent = ReadOutput(json);
+			actualContent.Options.FileFilter.Should().Be("*.log");
+			actualContent.LogFileReports.Should().HaveCount(1);
+			actualContent.LogFileReports[0].FullFilePath.Should().Be(Path.Combine(source, "1Mb.txt"));
+			actualContent.LogFileReports[0].Included.Should().BeFalse("because the log file 1Mb.txt does not match the filter *.log");
+			actualContent.Events.Should().BeEmpty("because we've specified a filter that excludes all log files in the source archive");
+		}
+
+		private ExecutionResult Normalize(string source, string output, bool recursive = false, string filter = null)
 		{
 			if (File.Exists(output))
 				File.Delete(output);
@@ -59,6 +78,8 @@ namespace Tailviewer.Normalizer.Systemtests
 			builder.AppendFormat(" --output \"{0}\"", output);
 			if (recursive)
 				builder.AppendFormat(" --recursive");
+			if (filter != null)
+				builder.AppendFormat(" --file_filter \"{0}\"", filter);
 
 			return Run(builder.ToString(), _normalizerPath);
 		}

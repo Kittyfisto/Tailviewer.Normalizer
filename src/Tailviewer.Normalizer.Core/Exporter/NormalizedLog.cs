@@ -8,6 +8,7 @@ namespace Tailviewer.Normalizer.Core.Exporter
 	public sealed class NormalizedLog
 	{
 		public NormalizationOptions Options { get; set; }
+		public List<LogFileReport> LogFileReports { get; set; }
 		public List<LogEvent> Events { get; set; }
 	}
 }

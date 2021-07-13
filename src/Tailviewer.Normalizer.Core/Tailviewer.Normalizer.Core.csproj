@@ -90,6 +90,7 @@
     <Compile Include="Exporter\IExporter.cs" />
     <Compile Include="Exporter\Json\JsonExporter.cs" />
     <Compile Include="Exporter\LogEvent.cs" />
+    <Compile Include="Exporter\LogFileReport.cs" />
     <Compile Include="Exporter\NormalizationOptions.cs" />
     <Compile Include="Exporter\NormalizedLog.cs" />
     <Compile Include="Parsing\LogFileParser.cs" />

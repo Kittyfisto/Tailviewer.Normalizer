@@ -57,22 +57,46 @@ namespace Tailviewer.Normalizer
 				Log.InfoFormat("Found {0} files in total, applying filename filter '{1}'...", allFiles.Count, _options.FileFilter);
 
 				var filteredFiles = FilterFiles(filesystem, allFiles);
-				Log.InfoFormat("{0} out of {1} files match filter, importing file(s) into database...",
-				               filteredFiles.Count,
-				               allFiles.Count);
-				foreach (var file in filteredFiles)
+				if (filteredFiles.Any())
 				{
-					ImportSource(importer, parser, file);
+					Log.InfoFormat("{0} out of {1} files match filter, importing file(s) into database...",
+					               filteredFiles.Count,
+					               allFiles.Count);
+					foreach (var file in filteredFiles)
+					{
+						ImportSource(importer, parser, file);
+					}
+				}
+				else
+				{
+					Log.WarnFormat("The file_filter \"{0}\" excludes all {1} file(s) from the source!", _options.FileFilter, allFiles.Count);
 				}
 
 				importer.Commit();
 
 				Log.InfoFormat("All files imported, exporting to '{0}'...", _options.Output);
 
-				var numExported = exporter.ExportTo(CreateOptions(_options), _database, _options.Output);
+				var numExported = exporter.ExportTo(CreateOptions(_options), CreateReport(allFiles, filteredFiles), _database, _options.Output);
 
 				Log.InfoFormat("Exported {0} log entries to '{1}'!", numExported, _options.Output);
 			}
+		}
+
+		private IReadOnlyList<LogFileReport> CreateReport(IReadOnlyList<string> allFiles,
+		                                                  IReadOnlyList<IFileInfo> readOnlyList)
+		{
+			var ret = new List<LogFileReport>(allFiles.Count);
+			foreach (var file in allFiles)
+			{
+				var report = new LogFileReport
+				{
+					FullFilePath = file,
+					Included = readOnlyList.Any(x => Equals(x.FullPath, file))
+				};
+				ret.Add(report);
+			}
+
+			return ret;
 		}
 
 		private NormalizationOptions CreateOptions(NormalizeOptions options)

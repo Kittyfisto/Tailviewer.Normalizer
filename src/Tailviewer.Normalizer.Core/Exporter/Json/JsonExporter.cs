@@ -10,7 +10,10 @@ namespace Tailviewer.Normalizer.Core.Exporter.Json
 	{
 		#region Implementation of IExporter
 
-		public int ExportTo(NormalizationOptions options, ILogEntryDatabase database, string filePath)
+		public int ExportTo(NormalizationOptions options,
+							IReadOnlyList<LogFileReport> logFileReports,
+							ILogEntryDatabase database,
+							string filePath)
 		{
 			int logEntryCount = 0;
 
@@ -28,6 +31,7 @@ namespace Tailviewer.Normalizer.Core.Exporter.Json
 				var jsonObject = new NormalizedLog
 				{
 					Options = options,
+					LogFileReports = new List<LogFileReport>(logFileReports),
 					Events = new List<LogEvent>()
 				};
 				foreach (var logEntry in reader.Query(null))

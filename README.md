@@ -44,7 +44,7 @@ For now, only JSON is supported.
 The entire / all log source file(s) is normalized into a singular json file. The resulting document consists of:
 
 - A structured view onto the arguments given to the normalizer (input, recursive true/false, filters, etc..)
-- A list of all log files which were discovered during normalization (TODO)
+- A list of all files which were discovered during normalization (and if they were included or not, for example because their filename did not match the file_filter)
 - A list of noteworthy warnings and/or errors which occured during normalization (TODO)
 - A list of log events
 
@@ -57,6 +57,16 @@ See the following example json file:
         "Recursive": true,
         "FileFilter": "foo*.log"
     },
+    "LogFileReports": [
+        {
+            "FullFilePath": "F:\\Logs\\logs.zip\\foo_20210511_152116_0.log",
+            "Included": true
+        },
+        {
+            "FullFilePath": "F:\\Logs\\logs.zip\\dmp.bin",
+            "Included": false
+        }
+    ],
     "Events": [
         {
             "Line": 1,

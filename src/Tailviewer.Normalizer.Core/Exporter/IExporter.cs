@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Tailviewer.Normalizer.Core.Database;
 
 namespace Tailviewer.Normalizer.Core.Exporter
@@ -6,6 +7,9 @@ namespace Tailviewer.Normalizer.Core.Exporter
 	public interface IExporter
 		: IDisposable
 	{
-		int ExportTo(NormalizationOptions options, ILogEntryDatabase database, string filePath);
+		int ExportTo(NormalizationOptions options, 
+		             IReadOnlyList<LogFileReport> logFileReports,
+		             ILogEntryDatabase database,
+		             string filePath);
 	}
 }
