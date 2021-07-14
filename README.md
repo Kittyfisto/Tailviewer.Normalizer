@@ -57,19 +57,23 @@ See the following example json file:
         "Source": "F:\\Logs\\logs.zip",
         "Recursive": true,
         "FileFilter": "foo*.log"
+    },,
+    "Application": {
+        "Version": "0.1.0.0",
+        "TailviewerApiVersion": "1.0.0.33",
+        "Plugins": [
+            {
+                "FullFilePath": "C:\\Users\\Simon\\AppData\\Local\\Tailviewer\\Downloads\\Plugins\\Tailviewer.MSBuild.0.0.0.tvp",
+                "Loaded": true,
+                "Error": null
+            },
+            {
+                "FullFilePath": "C:\\Users\\Simon\\AppData\\Local\\Tailviewer\\Downloads\\Plugins\\Tailviewer.Analysis.Count.0.7.tvp",
+                "Loaded": false,
+                "Error": "The plugin could not be loaded"
+            }
+        ],
     },
-    "Plugins": [
-        {
-            "FullFilePath": "C:\\Users\\Simon\\AppData\\Local\\Tailviewer\\Downloads\\Plugins\\Tailviewer.MSBuild.0.0.0.tvp",
-            "Loaded": true,
-            "Error": null
-        },
-        {
-            "FullFilePath": "C:\\Users\\Simon\\AppData\\Local\\Tailviewer\\Downloads\\Plugins\\Tailviewer.Analysis.Count.0.7.tvp",
-            "Loaded": false,
-            "Error": "The plugin could not be loaded"
-        }
-    ],
     "Files": [
         {
             "FullFilePath": "F:\\Logs\\logs.zip\\foo_20210511_152116_0.log",

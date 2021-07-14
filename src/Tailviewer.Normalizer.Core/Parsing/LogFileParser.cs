@@ -48,7 +48,7 @@ namespace Tailviewer.Normalizer.Core.Parsing
 			_services.RegisterInstance<ILogFileFormatMatcher>(new LogFileFormatMatcher(_services));
 		}
 
-		public IReadOnlyList<PluginReport> CreateReport()
+		public List<PluginReport> CreateReport()
 		{
 			var reports = new List<PluginReport>();
 			foreach (var pluginDescription in _pluginCache.Plugins)

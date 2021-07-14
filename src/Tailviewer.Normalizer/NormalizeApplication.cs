@@ -83,8 +83,8 @@ namespace Tailviewer.Normalizer
 					}
 
 					numExported = exporter.ExportTo(CreateOptions(_options),
+													CreateApplicationReport(parser),
 					                                CreateReport(allFiles, filteredFiles),
-					                                parser.CreateReport(),
 					                                _database,
 					                                _options.Output);
 				}
@@ -94,8 +94,8 @@ namespace Tailviewer.Normalizer
 
 					importer.Commit();
 					numExported = exporter.ExportTo(CreateOptions(_options),
+					                                CreateApplicationReport(parser),
 					                                CreateReport(new string[0], new IFileInfo[0]),
-													parser.CreateReport(),
 					                                _database,
 					                                _options.Output);
 				}
@@ -103,6 +103,30 @@ namespace Tailviewer.Normalizer
 				Log.InfoFormat("Exported {0} log entries to '{1}'!", numExported, _options.Output);
 			}
 			
+		}
+
+		private ApplicationReport CreateApplicationReport(LogFileParser parser)
+		{
+			return new ApplicationReport
+			{
+				Version = GetAssemblyVersion(),
+				TailviewerApiVersion = GetTailviewerApiVersion(),
+				Plugins = parser.CreateReport()
+			};
+		}
+
+		private string GetTailviewerApiVersion()
+		{
+			var thisAssembly = typeof(ILogFileFormat).Assembly;
+			var fileVersionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(thisAssembly.Location);
+			return fileVersionInfo.FileVersion;
+		}
+
+		private string GetAssemblyVersion()
+		{
+			var thisAssembly = Assembly.GetExecutingAssembly();
+			var fileVersionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(thisAssembly.Location);
+			return fileVersionInfo.FileVersion;
 		}
 
 		private IReadOnlyList<LogFileReport> CreateReport(IReadOnlyList<string> allFiles,

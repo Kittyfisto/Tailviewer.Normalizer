@@ -8,8 +8,8 @@ namespace Tailviewer.Normalizer.Core.Exporter
 		: IDisposable
 	{
 		int ExportTo(NormalizationOptions options, 
+		             ApplicationReport applicationReport,
 		             IReadOnlyList<LogFileReport> logFileReports,
-		             IReadOnlyList<PluginReport> plugins,
 		             ILogEntryDatabase database,
 		             string filePath);
 	}

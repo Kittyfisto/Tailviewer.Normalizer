@@ -11,8 +11,8 @@ namespace Tailviewer.Normalizer.Core.Exporter.Json
 		#region Implementation of IExporter
 
 		public int ExportTo(NormalizationOptions options,
+		                    ApplicationReport applicationReport,
 							IReadOnlyList<LogFileReport> files,
-							IReadOnlyList<PluginReport> plugins,
 							ILogEntryDatabase database,
 							string filePath)
 		{
@@ -32,8 +32,8 @@ namespace Tailviewer.Normalizer.Core.Exporter.Json
 				var jsonObject = new NormalizedLog
 				{
 					Options = options,
+					Application = applicationReport,
 					Files = new List<LogFileReport>(files),
-					Plugins = new List<PluginReport>(plugins),
 					Events = new List<LogEvent>()
 				};
 				foreach (var logEntry in reader.Query(null))
